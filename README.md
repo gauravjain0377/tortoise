@@ -1,216 +1,179 @@
 # 🐢 Tortoise Pulse
 
-> **Order & Repair Transparency Engine** — An SDE Intern Application Project for [Tortoise](https://www.tortoise.pro/)
+> **Real-time Order & Repair Transparency Platform** — Corporate Device Benefit Operations Engine  
+> Built by [Gaurav Jain](https://gauravjain.vercel.app/) for [Tortoise](https://www.tortoise.pro/)
 
-**One-line pitch:** Tortoise Pulse turns every device order and repair into a live, auditable timeline with automatic SLA-breach escalation — so "no update for 1.5 months" becomes structurally impossible.
+**Tortoise Pulse** is a real-time order and repair transparency platform that provides live SLA countdown tracking and proactive breach alerts to eliminate employee escalations across corporate device benefit programs.
 
 ---
 
-## 🔍 Why I Built This
+## 🔍 The Problem & Vision
 
-While researching Tortoise's product before applying, I found this in a public App Store review:
+Corporate device benefit programs often suffer from severe post-purchase opacity:
 
 > *"I placed an order 6 weeks ago. The app has been showing 'supplier has received the order' for the entire time. I have tried WhatsApp and calling but no one is responding."*
-
-And another:
-
+>
 > *"No communication for 2+ weeks after order was approved."*
+> — *App Store / Play Store User Reviews*
 
-This is not a hypothetical UX issue. It's a specific, documented, repeated failure at the most trust-critical moment in Tortoise's product — **right after an employee has committed salary deductions**.
-
-Tortoise Pulse is designed to make this failure **structurally impossible**:
-- Every stage transition is timestamped and immutable
-- SLA breach detection runs automatically
-- Agents and HR admins are escalated **before** employees have to chase support
-- The employee always knows exactly where their order is and why it's delayed
+When employees commit monthly salary deductions towards hardware benefits, silence destroys trust. **Tortoise Pulse** makes delivery delays and communication breakdowns **structurally impossible**:
+- Every fulfillment and repair stage is strictly governed by contractual SLA timers.
+- Overdue shipments automatically trigger proactive notifications and operational escalations **before** an employee ever has to reach out.
+- Complete transparency: every milestone transition is an immutable, timestamped event.
 
 ---
 
-## 🎯 What It Does
+## ✨ Core Features & Capabilities
 
-| Role | Experience |
-|---|---|
-| **Employee** | Real-time order/repair timeline, SLA countdown, notifications, AI-powered ticket creation |
-| **Support Agent** | Sorted queue with breach flags, one-click stage transitions, ticket response |
-| **HR Admin** | Org-wide health dashboard, breach alerts, trend charts, proactive SLA monitoring |
+### ⏱️ Real-Time Live SLA Countdown Timers
+- **Live-ticking SLA countdowns**: Every active order and repair features an animated countdown clock updating second-by-second (`Xh Ym Zs remaining`).
+- **Dynamic progress bars**: Visual threshold meters that transition smoothly from healthy green (`var(--brand)`) to caution amber (`#fbbf24`) to critical overdue red (`#f87171`).
+- **Overdue severity indicators**: Accurately tracks accumulated overdue hours (+Xh Ym overdue) with pulsating status badges.
+
+### 🛡️ Proactive SLA Breach Detection & Email Alerts
+- **Automated SLA monitor**: Scans order/repair elapsed durations against organization-specific SLA limits across each stage.
+- **Proactive notification engine**: Dispatches in-app alerts and proactive breach emails with root causes (e.g., *Supplier Logistics Delay*, *Courier Transit Hold*, *OEM Service Center Backlog*), revised ETAs, and auto-escalation to the ops desk.
+- **Active Breaches Hub for HR**: Dedicated control panel for HR admins to inspect and audit organization-wide delayed shipments.
+
+### 📦 Self-Service Device Order Placement Flow
+- **Approved catalog selection**: Browse certified devices (MacBook Pro M3, ThinkPad X1 Carbon, Dell XPS 15, HP EliteBook, Surface Laptop).
+- **Instant procurement initialization**: Select device, confirm leasing tenure and SLA commitments, and instantly launch the live tracking timeline.
+
+### 📜 Immutable Event-Driven Timelines
+- **End-to-end lifecycle tracking**:
+  - **Orders**: `placed → confirmed → sourced → dispatched → in_transit → delivered`
+  - **Repairs**: `pickup_scheduled → picked_up → at_service_center → repaired → dispatched_back → delivered`
+- **Audit-ready logs**: Every transition captures timestamp, operator role, transit identifiers, and status notes.
+
+### 🤖 AI-Powered Ticket Triage (Groq Llama 3.1)
+- **Instant triage**: Submitting a support ticket automatically evaluates category (`order-stuck`, `repair-overdue`, `billing-dispute`, `device-issue`, `general`) and urgency.
+- **Automated response generation**: Provides instant contextual answers (e.g., live DTDC courier tracking numbers or service center turnaround times).
+- **3-tier fail-safe resilience**: Groq Cloud API (`llama-3.1-8b-instant`) → Realistic Mock Engine → Rule-based keyword classifier. Support tickets are never dropped or blocked.
+
+### 📊 Comprehensive Multi-Role Experience
+
+| Role | Portal & Capabilities |
+| :--- | :--- |
+| **Employee** (`priya@deloitte.in`) | Live SLA order countdowns, repair tracking with loaner device visibility, 1-click order placement, Tortoise Care annual repair quota usage, ticket desk, notification center. |
+| **Support Agent** (`agent@tortoise.pro`) | Central operational queue prioritized by SLA urgency and breach flags, 1-click state machine transitions, ticket resolution workspace. |
+| **HR Admin** (`hr@deloitte.in`) | Org-wide device health analytics, breach rate KPIs, SVG fulfillment trend graphs, proactive employee protection telemetry. |
+
+### 🎨 Visual & Aesthetic Design
+- **Dark Glassmorphism UI**: Tailored to Tortoise's signature dark aesthetic and lime accent (`#83eda8`).
+- **Custom SVG Telemetry Charts**: Scalable vector charts for 7-day procurement volume and breach frequency trends.
+- **Responsive Layout**: Desktop sidebar navigation with mobile drawer support.
+- **Brand Favicon Suite**: Custom Tortoise shell + telemetry pulse SVG, 32px/192px PNGs, and Apple Touch icons.
 
 ---
 
-## 🚀 Quick Start (no database, no API key needed)
+## 🏗️ Technical Architecture
 
+```
+tortoise-pulse/
+  ├── src/
+  │   ├── app/
+  │   │   ├── (auth)/login/             ← Role-based demo switcher & credentials
+  │   │   ├── employee/
+  │   │   │   ├── dashboard/            ← Live countdowns, order modal, benefit usage
+  │   │   │   ├── cases/[id]/           ← Interactive timeline & tracking details
+  │   │   │   └── support/              ← Ticket creation & AI triage desk
+  │   │   ├── agent/queue/              ← Operational queue & stage transition engine
+  │   │   ├── hr/
+  │   │   │   ├── dashboard/            ← Org analytics, KPIs & SVG trend charts
+  │   │   │   └── breaches/             ← SLA escalation & proactive email monitoring
+  │   │   ├── api/                      ← Next.js API Routes (Node.js runtime)
+  │   │   │   ├── auth/                 ← JWT issuance (jose) & verification
+  │   │   │   ├── employee/             ← Cases, tickets, notifications, benefit quotas
+  │   │   │   ├── agent/                ← Case queue & state transitions
+  │   │   │   ├── hr/                   ← Organization analytics & breach queries
+  │   │   │   └── internal/sla-scan     ← SLA detection & escalation scanner
+  │   │   ├── globals.css               ← Design tokens, animations, responsive utilities
+  │   │   └── layout.tsx                ← Global layout, authentication context & icons
+  │   ├── components/                   ← Sidebar, AppLayout, LiveTimers, Charts
+  │   ├── context/                      ← AuthContext & centralized useApi client
+  │   ├── lib/
+  │   │   ├── auth.ts                   ← HS256 JWT sign/verify
+  │   │   ├── groqTriage.ts             ← Llama 3.1 AI ticket classifier & auto-responder
+  │   │   ├── stateMachine.ts           ← Transition rules & SLA limits
+  │   │   └── store.ts                  ← Singleton store with pre-seeded scenarios
+  │   └── types/                        ← TypeScript domain definitions
+```
+
+---
+
+## ⚙️ State Machine Rules
+
+Every order and repair adheres to a strictly validated transition model:
+
+```
+[Order Flow]
+Placed ──────► Confirmed ──────► Sourced ──────► Dispatched ──────► In Transit ──────► Delivered
+
+[Repair Flow]
+Pickup Scheduled ──► Picked Up ──► At Service Center ──► Repaired ──► Dispatched Back ──► Delivered
+```
+
+- **Validation**: Any non-sequential or unpermitted stage transition is rejected with a `409 Conflict`.
+- **Immutability**: Historical events are append-only.
+- **Configurable SLA Limits**: Stage deadlines (in hours) are customizable per corporate organization contract.
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone & Install
 ```bash
-git clone https://github.com/your-username/tortoise-pulse
-cd tortoise-pulse
+git clone https://github.com/your-username/tortoise.git
+cd tortoise
 npm install
-cp .env.local.example .env.local
+```
+
+### 2. Environment Configuration
+Create a `.env.local` file:
+```env
+# Required for signing JWTs (minimum 32 chars)
+JWT_SECRET=4649a6aa08526bbd54bcfbf08f015c99eb2868b1b15df264b20d4b786f331107
+
+# AI Triage Mode: true = deterministic mock (default), false = live Groq API
+MOCK_AI=true
+
+# Optional: Live Groq API Key (get free at https://console.groq.com)
+# GROQ_API_KEY=gsk_your_groq_key_here
+
+# Internal SLA scanner secret
+INTERNAL_SECRET=tortoise-internal
+```
+
+### 3. Run Locally
+```bash
 npm run dev
 ```
-
-Open [http://localhost:3000](http://localhost:3000) → Login page with demo account buttons.
-
-### Demo Accounts (password: `demo123`)
-
-| Role | Email | What you'll see |
-|---|---|---|
-| Employee | `priya@deloitte.in` | A **breached order** (46 days stuck), 1 repair, 1 delivered — great for the demo |
-| Agent | `agent@tortoise.pro` | Queue with 3 breached cases sorted to the top |
-| HR Admin | `hr@deloitte.in` | Dashboard showing 3 active breaches, breach rate, trend charts |
+Open [http://localhost:3000](http://localhost:3000) to access the application.
 
 ---
 
-## 🏗️ Architecture
+## 🔑 Demo Accounts
 
-```
-Next.js 14 (App Router)
-  ├── /src/app/api/          ← Backend API routes (Node.js runtime)
-  │   ├── auth/login         ← JWT auth with bcrypt
-  │   ├── auth/me            ← Current user + unread count
-  │   ├── employee/cases     ← Case list with SLA enrichment
-  │   ├── employee/cases/[id]← Case detail with full timeline
-  │   ├── employee/tickets   ← Create ticket → AI triage → route
-  │   ├── agent/queue        ← All active cases, sorted by SLA urgency
-  │   ├── agent/cases/[id]/transition  ← State machine transition
-  │   ├── hr/summary         ← Org-wide KPIs and trend data
-  │   ├── hr/breaches        ← All currently breached cases for org
-  │   └── internal/sla-scan  ← SLA breach detection (called by cron)
-  │
-  ├── /src/lib/              ← Core business logic
-  │   ├── store.ts           ← In-memory data store (seed data)
-  │   ├── stateMachine.ts    ← Transition validation, SLA calculation
-  │   ├── auth.ts            ← JWT sign/verify (jose)
-  │   └── groqTriage.ts      ← AI triage with 3-tier fallback
-  │
-  ├── /src/app/(pages)/      ← Frontend React pages
-  │   ├── login/             ← Auth with demo account quick-fill
-  │   ├── employee/dashboard ← Case cards + notifications
-  │   ├── employee/cases/[id]← Vertical timeline + SLA countdown
-  │   ├── employee/support   ← Ticket creation + AI triage result
-  │   ├── agent/queue        ← Sortable table + transition controls
-  │   ├── hr/dashboard       ← KPI cards + bar charts
-  │   └── hr/breaches        ← Breach list with overdue indicators
-  │
-  └── /src/context/          ← Auth context + useApi hook
-```
+Use the pre-filled demo quick-access buttons on the login screen (password: `demo123`):
+
+| Persona | Email | Purpose & Key Scenarios |
+| :--- | :--- | :--- |
+| **Employee** | `priya@deloitte.in` | Inspect 46-day breached order, live countdowns, raise AI support tickets, order new devices. |
+| **Support Agent** | `agent@tortoise.pro` | View prioritized triage queue with red breach badges, advance stages, resolve tickets. |
+| **HR Admin** | `hr@deloitte.in` | Audit Deloitte India device health metrics, view active breach rosters, inspect 7-day trend charts. |
 
 ---
 
-## 🧠 State Machine
+## 🌐 Deployment
 
-The core of the system. Every case (order or repair) follows a **validated state machine**:
-
-**Order:** `placed → confirmed → sourced → dispatched → in_transit → delivered`
-
-**Repair:** `pickup_scheduled → picked_up → at_service_center → repaired → dispatched_back → delivered`
-
-Rules:
-- Every transition is validated against an allowed-transitions map — invalid transitions return `409`
-- Every transition appends an **immutable event** to the event log — nothing is ever overwritten
-- Each stage has an SLA limit (configurable per org) — the breach detector flags overdue stages
+### Deploy to Vercel (Recommended)
+1. Push your repository to GitHub.
+2. Import the project on [Vercel](https://vercel.com).
+3. Set the Environment Variables (`JWT_SECRET`, `MOCK_AI`, `INTERNAL_SECRET`).
+4. Click **Deploy**.
 
 ---
 
-## 🤖 AI Ticket Triage (3-tier fallback)
+## 👨‍💻 Author
 
-```
-Employee submits ticket
-         ↓
-GROQ_API_KEY in .env?
-   NO (default demo) → Mock AI response (realistic, 600ms delay)
-   YES → Call Groq API (llama-3.1-8b-instant)
-         ↓ FAILS → Rule-based keyword classifier
-                    ↓ ALWAYS returns valid result
-                    Ticket is NEVER blocked
-```
-
-Categories: `order-stuck` | `repair-overdue` | `billing-dispute` | `device-issue` | `general`
-
-SLA by category: billing-dispute = 2h, order-stuck = 4h, repair-overdue = 6h, device-issue = 8h, general = 24h
-
-### To use real Groq AI:
-1. Get a free key at [console.groq.com](https://console.groq.com)
-2. Add to `.env.local`: `GROQ_API_KEY=gsk_...` and `MOCK_AI=false`
-
----
-
-## 🔐 Auth & Security
-
-- JWT tokens signed with HS256 (jose library)
-- bcrypt password hashing
-- Role-based access: employees only see their own cases, HR admins only see their org
-- All queries filtered by `orgId`/`employeeId` from the JWT — never from client params
-- Input length limits on all text fields
-
----
-
-## 📊 Demo Data (pre-seeded)
-
-The store initialises with realistic demo data on first API call:
-
-| Case | Employee | Status | Why it's interesting |
-|---|---|---|---|
-| iPhone 15 Pro Max | Priya (Deloitte) | **BREACHED** — 46 days in "confirmed" | Main demo case — the "1.5 month" scenario |
-| MacBook Pro M3 | Priya (Deloitte) | Delivered | Healthy comparison |
-| MacBook Pro (repair) | Priya (Deloitte) | At service center | Shows repair flow + loaner device |
-| Galaxy S24 Ultra | Rahul (Deloitte) | In transit | Near-SLA |
-| Dell XPS 15 | Aisha (Deloitte) | **BREACHED** — 14 days in "sourced" | Second breach |
-| iPhone 15 | Sneha (Paytm) | **BREACHED** | Cross-org breach |
-| Lenovo ThinkPad | Deepa (Indus) | **BREACHED** — dispatched not moving | Third org |
-
----
-
-## 🏭 What's Stubbed vs. What Would Be Real
-
-| Feature | In Prototype | In Production |
-|---|---|---|
-| Data store | In-memory (resets on restart) | MongoDB Atlas / Postgres |
-| Auth | JWT + bcrypt | SSO via employer HRMS |
-| SLA breach detection | Manual `/api/internal/sla-scan` call | EventBridge / Cloud Scheduler |
-| Notifications | In-app only | WhatsApp Business API + SendGrid |
-| Supplier updates | Agent manual transitions | Supplier webhook integration |
-| HRMS eligibility | Hardcoded demo users | Darwinbox / Keka / Zoho adapters |
-| AI triage | Mock / Groq | Groq or Gemini with rate-limit handling |
-
----
-
-## 📁 Tech Stack
-
-| Layer | Tech |
-|---|---|
-| Framework | Next.js 14 (App Router) |
-| Language | TypeScript (strict) |
-| Styling | Tailwind CSS + custom CSS |
-| Auth | jose (JWT) + bcryptjs |
-| AI | Groq API (llama-3.1-8b-instant) with fallback |
-| Database | In-memory store (production-ready schema) |
-| Deployment | Vercel (zero config) |
-
----
-
-## 🎬 Demo Script (4–5 minutes)
-
-1. **The Problem** (30s): Show the two App Store review quotes
-2. **Existing Gap** (30s): Journey map with fulfilment stage highlighted
-3. **Solution** (30s): Tortoise Pulse pitch
-4. **Live Demo** (2 min):
-   - Login as `priya@deloitte.in` → breached order card
-   - Click order → timeline, SLA countdown, reason code
-   - Raise a support ticket → AI triage result
-   - Login as agent → breached case at top → advance stage → notification fires
-   - Login as HR admin → breach rate dashboard
-5. **Architecture** (30s): State machine + event log as the core decision
-6. **Measurable benefit** (30s): "This doesn't eliminate delays — it makes them structurally impossible to hide"
-
----
-
-## 🗺️ Roadmap to Production
-
-- **Phase 1 (prototype, done):** State machine, SLA breach, AI triage, 3 role dashboards
-- **Phase 2:** Supplier webhook integration (auto-advance stages, no manual agent work)
-- **Phase 3:** HRMS adapters (Darwinbox, Keka, Zoho) for real employee sync
-- **Phase 4:** WhatsApp Business API for real push notifications
-- **Phase 5:** Persistent database (MongoDB Atlas or Postgres) + multi-region
-
----
-
-Built by **Gaurav Jain** as an SDE Intern application project for [Tortoise](https://www.tortoise.pro/).  
-Research sources: tortoise.pro, App Store/Play Store reviews, Crunchbase, Inc42, LinkedIn — September 2026.
+Created with ❤️ by **[Gaurav Jain](https://gauravjain.vercel.app/)**

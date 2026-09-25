@@ -42,3 +42,5 @@ next-env.d.ts
 
 # old subfolder (emptied - only .next lock remains, safe to ignore)
 /tortoise-pulse/
+
+/Tortoise-SDE-Intern-Project-Plan.md
