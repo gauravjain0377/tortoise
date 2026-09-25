@@ -132,7 +132,7 @@ npm install
 Create a `.env.local` file:
 ```env
 # Required for signing JWTs (minimum 32 chars)
-JWT_SECRET=4649a6aa08526bbd54bcfbf08f015c99eb2868b1b15df264b20d4b786f331107
+JWT_SECRET=tortoise-pulse-dev-secret-32-chars-min
 
 # AI Triage Mode: true = deterministic mock (default), false = live Groq API
 MOCK_AI=true
@@ -161,16 +161,6 @@ Use the pre-filled demo quick-access buttons on the login screen (password: `dem
 | **Employee** | `priya@deloitte.in` | Inspect 46-day breached order, live countdowns, raise AI support tickets, order new devices. |
 | **Support Agent** | `agent@tortoise.pro` | View prioritized triage queue with red breach badges, advance stages, resolve tickets. |
 | **HR Admin** | `hr@deloitte.in` | Audit Deloitte India device health metrics, view active breach rosters, inspect 7-day trend charts. |
-
----
-
-## 🌐 Deployment
-
-### Deploy to Vercel (Recommended)
-1. Push your repository to GitHub.
-2. Import the project on [Vercel](https://vercel.com).
-3. Set the Environment Variables (`JWT_SECRET`, `MOCK_AI`, `INTERNAL_SECRET`).
-4. Click **Deploy**.
 
 ---
 
