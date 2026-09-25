@@ -19,21 +19,51 @@ interface HrSummary {
   trendData: Array<{ date: string; orders: number; breaches: number }>;
 }
 
-function MiniBarChart({ data, maxVal, color }: { data: number[]; maxVal: number; color: string }) {
+function SvgBarChart({ data, maxVal, color, labels }: { data: number[]; maxVal: number; color: string; labels?: string[] }) {
+  const W = 100;
+  const H = 72;
+  const barW = W / data.length - 3;
+  const max = Math.max(maxVal, 1);
   return (
-    <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', height: '60px' }}>
-      {data.map((v, i) => (
-        <div
-          key={i}
-          style={{
-            flex: 1, borderRadius: '6px 6px 0 0', transition: 'height 0.5s',
-            background: color, opacity: 0.4 + (i / data.length) * 0.6,
-            height: maxVal > 0 ? `${Math.max(10, (v / maxVal) * 100)}%` : '10px',
-            minHeight: '10px',
-          }}
-        />
+    <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', height: '80px', overflow: 'visible' }}>
+      <defs>
+        <linearGradient id={`bar-grad-${color.replace(/[^a-z0-9]/gi, '')}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={color} stopOpacity="0.9" />
+          <stop offset="100%" stopColor={color} stopOpacity="0.3" />
+        </linearGradient>
+      </defs>
+      {data.map((v, i) => {
+        const barH = Math.max(4, (v / max) * (H - 10));
+        const x = i * (W / data.length) + 1.5;
+        const y = H - barH;
+        return (
+          <g key={i}>
+            <rect
+              x={x} y={y} width={barW} height={barH}
+              rx="3"
+              fill={`url(#bar-grad-${color.replace(/[^a-z0-9]/gi, '')})`}
+              style={{ transition: 'height 0.5s, y 0.5s' }}
+            />
+            {v > 0 && (
+              <text x={x + barW / 2} y={y - 3} textAnchor="middle" fill={color} fontSize="7" fontWeight="700" opacity="0.8">
+                {v}
+              </text>
+            )}
+          </g>
+        );
+      })}
+      {labels && labels.map((l, i) => (
+        <text
+          key={l}
+          x={i * (W / labels.length) + (W / labels.length) / 2}
+          y={H + 10}
+          textAnchor="middle"
+          fill="rgba(255,255,255,0.5)"
+          fontSize="7"
+          fontWeight="600"
+        >{l}</text>
       ))}
-    </div>
+    </svg>
   );
 }
 
@@ -142,7 +172,10 @@ export default function HrDashboardPage() {
         {summary.openBreaches > 0 && (
           <div style={{
             marginBottom: '24px', padding: '20px 24px', borderRadius: '16px',
-            background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.3)',
+            background: 'rgba(248,113,113,0.08)',
+            border: '1px solid rgba(248,113,113,0.4)',
+            boxShadow: '0 0 40px rgba(248,113,113,0.06)',
+            animation: 'tp-breach-pulse 2.5s infinite',
           }} className="animate-slide-up">
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
               <div style={{
@@ -155,8 +188,17 @@ export default function HrDashboardPage() {
                   {summary.openBreaches} order{summary.openBreaches > 1 ? 's have' : ' has'} exceeded the contractual SLA
                 </div>
                 <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.75)', lineHeight: 1.6 }}>
-                  Affected employees have been notified proactively to prevent internal complaints.{' '}
-                  <span style={{ color: '#f87171', fontWeight: 700 }}>Breach rate: {summary.breachRate}%</span>
+                  Affected employees have been <span style={{ color: '#f87171', fontWeight: 700 }}>notified via email</span> proactively to prevent internal complaints.{' '}
+                  <span style={{ color: '#fbbf24', fontWeight: 700 }}>Breach rate: {summary.breachRate}%</span>
+                </div>
+                <div style={{ marginTop: '10px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                  {['📧 Email alerts sent', '⚡ Ops desk notified', '📞 Escalation active'].map((tag) => (
+                    <span key={tag} style={{
+                      fontSize: '11px', fontWeight: 700, padding: '3px 10px', borderRadius: '9999px',
+                      background: 'rgba(248,113,113,0.12)', color: '#f87171',
+                      border: '1px solid rgba(248,113,113,0.25)',
+                    }}>{tag}</span>
+                  ))}
                 </div>
               </div>
               <Link href="/hr/breaches">
@@ -201,14 +243,12 @@ export default function HrDashboardPage() {
               </div>
               <span className="badge-info">{orderValues.reduce((a, b) => a + b, 0)} total orders</span>
             </div>
-            <MiniBarChart data={orderValues} maxVal={maxOrders} color="var(--brand)" />
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
-              {summary.trendData.map((d) => (
-                <div key={d.date} style={{ flex: 1, textAlign: 'center', fontSize: '11px', color: 'rgba(255,255,255,0.65)', fontWeight: 700 }}>
-                  {new Date(d.date).toLocaleDateString('en-IN', { weekday: 'narrow' })}
-                </div>
-              ))}
-            </div>
+            <SvgBarChart
+              data={orderValues}
+              maxVal={maxOrders}
+              color="var(--brand)"
+              labels={summary.trendData.map((d) => new Date(d.date).toLocaleDateString('en-IN', { weekday: 'narrow' }))}
+            />
           </div>
 
           {/* Breaches Trend */}
@@ -220,14 +260,12 @@ export default function HrDashboardPage() {
               </div>
               <span className="badge-breach">{breachValues.reduce((a, b) => a + b, 0)} total</span>
             </div>
-            <MiniBarChart data={breachValues} maxVal={maxBreaches} color="#f87171" />
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px' }}>
-              {summary.trendData.map((d) => (
-                <div key={d.date} style={{ flex: 1, textAlign: 'center', fontSize: '11px', color: 'rgba(255,255,255,0.65)', fontWeight: 700 }}>
-                  {new Date(d.date).toLocaleDateString('en-IN', { weekday: 'narrow' })}
-                </div>
-              ))}
-            </div>
+            <SvgBarChart
+              data={breachValues}
+              maxVal={maxBreaches}
+              color="#f87171"
+              labels={summary.trendData.map((d) => new Date(d.date).toLocaleDateString('en-IN', { weekday: 'narrow' }))}
+            />
           </div>
         </div>
 

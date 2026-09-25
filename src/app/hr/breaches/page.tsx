@@ -38,12 +38,51 @@ function OverdueBadge({ hours }: { hours: number }) {
   const label = days > 0 ? `${days}d ${remainingHours}h overdue` : `${hours.toFixed(0)}h overdue`;
   const color = hours > 72 ? '#f87171' : '#fbbf24';
   return (
-    <span className="text-xs font-bold px-3 py-1 rounded-full" style={{
+    <span style={{
       background: `${color}18`,
       color,
       border: `1px solid ${color}40`,
+      fontSize: '12px', fontWeight: 800, padding: '4px 12px', borderRadius: '9999px',
+      display: 'inline-flex', alignItems: 'center', gap: '6px',
     }}>
+      <span style={{
+        width: '6px', height: '6px', borderRadius: '50%', background: color,
+        animation: 'tp-breach-blink 1.2s infinite',
+      }} />
       {label}
+    </span>
+  );
+}
+
+// Live countdown for breached items
+function BreachLiveTimer({ hoursOverdue }: { hoursOverdue: number }) {
+  const initialSecs = Math.round(hoursOverdue * 3600);
+  const [secs, setSecs] = useState(initialSecs);
+
+  useEffect(() => {
+    setSecs(Math.round(hoursOverdue * 3600));
+  }, [hoursOverdue]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setSecs((s) => s + 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const h = Math.floor(secs / 3600);
+  const m = Math.floor((secs % 3600) / 60);
+  const s = secs % 60;
+
+  return (
+    <span style={{
+      fontFamily: "'Chivo', monospace", fontSize: '13px', fontWeight: 800,
+      color: '#f87171', letterSpacing: '0.03em',
+      background: 'rgba(248,113,113,0.1)', border: '1px solid rgba(248,113,113,0.2)',
+      padding: '3px 10px', borderRadius: '6px',
+      animation: 'tp-sla-tick 1s infinite',
+    }}>
+      +{h}h {String(m).padStart(2, '0')}m {String(s).padStart(2, '0')}s overdue
     </span>
   );
 }
@@ -112,7 +151,16 @@ export default function HrBreachesPage() {
             <div>
               <div style={{ fontWeight: 800, color: '#ffffff', fontSize: '14px', marginBottom: '3px' }}>Proactive SLA Escalation in Progress</div>
               <div style={{ fontSize: '13px', color: 'rgba(255,255,255,0.75)', lineHeight: 1.6 }}>
-                Tortoise Pulse has automatically flagged these orders to our dedicated operations desk. Affected employees have been notified with updated delivery windows so you never face frustrated escalations. For special handling, contact <span style={{ color: 'var(--brand)', fontWeight: 700 }}>ops@tortoise.pro</span>.
+                Tortoise Pulse has automatically flagged these orders to our dedicated operations desk. Affected employees have been <strong style={{ color: '#83eda8' }}>notified via email</strong> with updated delivery windows so you never face frustrated escalations.
+              </div>
+              <div style={{ marginTop: '10px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                {['📧 Email sent to employees', '⚡ Ops desk alerted', '🔄 Auto-escalation live'].map((tag) => (
+                  <span key={tag} style={{
+                    fontSize: '11px', fontWeight: 700, padding: '3px 10px', borderRadius: '9999px',
+                    background: 'rgba(131,237,168,0.08)', color: 'var(--brand)',
+                    border: '1px solid rgba(131,237,168,0.2)',
+                  }}>{tag}</span>
+                ))}
               </div>
             </div>
           </div>
@@ -162,8 +210,11 @@ export default function HrBreachesPage() {
                       </div>
                     </div>
                   </div>
-                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                <div style={{ textAlign: 'right', flexShrink: 0 }}>
                     <OverdueBadge hours={b.hoursOverdue} />
+                    <div style={{ marginTop: '8px' }}>
+                      <BreachLiveTimer hoursOverdue={b.hoursOverdue} />
+                    </div>
                     {b.breachReason && (
                       <div style={{ fontSize: '12px', marginTop: '8px', color: '#fbbf24', fontWeight: 600 }}>
                         Root cause: {BREACH_REASONS[b.breachReason] ?? b.breachReason}
